@@ -10,9 +10,22 @@ This is a initial beta version of my personal JIT compiler for BrainFuck<br>
 Tested only on Ubuntu 17.10, CPU intel x86_64. Compiled with GCC<br>
 In next time, i want add Windows compatibility.<br>
 
+# Test used
+<b>"hello world"</b> <br>
+<code>+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-.</code> <br>
+<br>
+<b>"Hello World!\n"</b> by https://esolangs.org/wiki/Brainfuck#Memory_and_wrapping <br>
+<code>++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.</code> <br>
+<br>
+<b>"Mandelbrot"</b> written by Erik Bosman <br>
+<code>http://esoteric.sange.fi/brainfuck/utils/mandelbrot/mandelbrot.b</code>
+<p align="center">
+  <img src="https://github.com/deangelisdf/BF-JITcompiled/blob/master/example.png" width="350" title="the best test">
+</p>
+
 Documentation in code brainfuck.h
 
-Reference:
-OpCode x86_64 http://ref.x86asm.net/
-BrainFuck https://en.wikipedia.org/wiki/Brainfuck
+# Reference <br>
+OpCode x86_64 http://ref.x86asm.net/ <br>
+BrainFuck https://en.wikipedia.org/wiki/Brainfuck <br>
 mmap https://www.gnu.org/software/libc/manual/html_node/Memory_002dmapped-I_002fO.html
