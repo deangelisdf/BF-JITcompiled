@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 deangelis
+ * Copyright (C) 2018 deangelis domenico francesco
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 /* 
  * File:   brainfuck.h
- * Author: deangelis
+ * Author: deangelis domenico francesco
  *
  * Created on 27 settembre 2018, 12.57
  */
@@ -29,7 +29,7 @@
 #include <cstdio>
 using namespace std;
 
-#define MAX_DIM_BUFFER 128
+#define MAX_DIM_BUFFER 1024
 
 struct linked_list_token{
     char op;
@@ -43,6 +43,16 @@ struct ld_token_jmp : linked_list_token{
     virtual ~ld_token_jmp(){}
     ld_token_jmp():linked_list_token(),jmp(NULL){}
 };
+
+struct statistic_token{
+    unsigned short op_inc_dec;
+    unsigned short op_open_loop,op_close_loop;
+    unsigned short op_putchar;
+    unsigned short op_getchar;
+    statistic_token():op_inc_dec(0),op_open_loop(0),op_close_loop(0),op_putchar(0),op_getchar(0){}
+};
+
+#define getByteBFCompile(statistic) (11 + statistic.op_inc_dec*3 + statistic.op_open_loop*9 + statistic.op_close_loop*5 + statistic.op_putchar*20)
 
 typedef int (*BrainFuckCompiled)(char*);
 
@@ -58,7 +68,7 @@ void addNext(linked_list_token *&father, char op);
  * @param[code]: string of brainfuck code
  * @param[token]: is return
  */
-bool lexing_parsing(const char* code,linked_list_token *&token);
+bool lexing_parsing(const char* code,linked_list_token *&token,statistic_token &statistic);
 
 /*
  * @brief: interpeter of brainfuck
@@ -70,11 +80,14 @@ void interpeter(linked_list_token* token,char* ptr);
 /*
  * @brief: Just-In-Time Compiler for BrainFuck
  * @param[token]: brainfuck code in token
+ * @param[statistic]: statistic for dimension mmap
  * @return: function pointer of compiled code
  */
-BrainFuckCompiled compile(linked_list_token* token);
+BrainFuckCompiled compile(linked_list_token* token,const statistic_token&);
 
 void clear_memory(char ptr[MAX_DIM_BUFFER]);
+
+void freeBFcompiled(BrainFuckCompiled,const statistic_token &s);
 
 #endif /* BRAINFUCK_H */
 

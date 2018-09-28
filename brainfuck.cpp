@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 deangelis
+ * Copyright (C) 2018 deangelis domenico francesco
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ inline void ftrim(string &s)
     s.erase(i.base(), s.end());
 }
 
-bool lexing_parsing(const char* code,linked_list_token *&token){
+bool lexing_parsing(const char* code,linked_list_token *&token,statistic_token& statistic){
     string code_str = code;
     ltrim(code_str);
     ftrim(code_str);
@@ -70,14 +70,24 @@ bool lexing_parsing(const char* code,linked_list_token *&token){
         switch((*i)){//if char isn't part of lexical of BrainFu..K is ignored
             case '<': case '>':
             case '+': case '-':
-            case '.': case ',':
+                statistic.op_inc_dec++;
+                addNext(index,(*i));
+                break;
+            case '.': 
+                statistic.op_putchar++;
+                addNext(index,(*i));
+                break;
+            case ',':
+                statistic.op_getchar++;
                 addNext(index,(*i));
                 break;
             case '[':
+                statistic.op_open_loop++;
                 addNext(index,(*i));
                 tkn_jmp.push_back(dynamic_cast<ld_token_jmp*>(index->next));
                 break;
             case ']':
+                statistic.op_close_loop++;
                 if(tkn_jmp.size()>0){
                     addNext(index,(*i));
                     dynamic_cast<ld_token_jmp*>(index->next)->jmp = tkn_jmp[tkn_jmp.size()-1];
@@ -147,8 +157,12 @@ void interpeter(linked_list_token* token,char* ptr){
     }
 }
 
-BrainFuckCompiled compile(linked_list_token* token){
-    uint8_t *prg = (uint8_t*)mmap(NULL,1024, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
+void freeBFcompiled(BrainFuckCompiled fn,const statistic_token &s){
+    munmap((void*)fn,getByteBFCompile(s));
+}
+
+BrainFuckCompiled compile(linked_list_token* token,const statistic_token &s){
+    uint8_t *prg = (uint8_t*)mmap(NULL,getByteBFCompile(s), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
     uint8_t inc_ptr = 0;
     uint8_t* i_prg = prg;
     uint8_t* calc_prg_jmp;//serve per calcolare il salto
@@ -215,8 +229,8 @@ BrainFuckCompiled compile(linked_list_token* token){
                 *(i_prg++) = (uint8_t)((addr & 0xff000000)>>24);
                 *(i_prg++) = (uint8_t)((addr & 0xff00000000)>>32);
                 *(i_prg++) = (uint8_t)((addr & 0xff0000000000)>>40);
-                *(i_prg++) = (uint8_t)((addr & 0xff0000000000)>>48);
-                *(i_prg++) = (uint8_t)((addr & 0xff0000000000)>>56);
+                *(i_prg++) = (uint8_t)((addr & 0xff000000000000)>>48);
+                *(i_prg++) = (uint8_t)((addr & 0xff00000000000000)>>56);
                 
                 //callq *%rax
                 *(i_prg++) = 0xff;
