@@ -44,6 +44,13 @@ struct ld_token_jmp : linked_list_token{
     ld_token_jmp():linked_list_token(),jmp(NULL){}
 };
 
+struct linked_list_token_repeat : linked_list_token {
+    unsigned char repeat;
+    virtual ~linked_list_token_repeat(){}
+    linked_list_token_repeat() : linked_list_token(),repeat(0){}
+};
+
+
 struct statistic_token{
     unsigned short op_inc_dec;
     unsigned short op_open_loop,op_close_loop;
@@ -52,7 +59,8 @@ struct statistic_token{
     statistic_token():op_inc_dec(0),op_open_loop(0),op_close_loop(0),op_putchar(0),op_getchar(0){}
 };
 
-#define getByteBFCompile(statistic) (11 + statistic.op_inc_dec*3 + statistic.op_open_loop*9 + statistic.op_close_loop*5 + statistic.op_putchar*20)
+#define getByteBFCompile(statistic) (11 + statistic.op_inc_dec*3 + statistic.op_open_loop*9 + statistic.op_close_loop*5 + statistic.op_putchar*20 + statistic.op_getchar*20)
+#define getByteBFCompiledO1(statistic) (11 + statistic.op_inc_dec*4 + statistic.op_open_loop*9 + statistic.op_close_loop*5 + statistic.op_putchar*20 + statistic.op_getchar*20)
 
 typedef int (*BrainFuckCompiled)(char*);
 
@@ -84,6 +92,24 @@ void interpeter(linked_list_token* token,char* ptr);
  * @return: function pointer of compiled code
  */
 BrainFuckCompiled compile(linked_list_token* token,const statistic_token&);
+
+/*
+ * @brief: Just-In-Time Compiler for first stage of BrainFuck-jitCompiled's optimization 
+ * @param[token]: brainfuck code in token
+ * @param[statistic]: statistic for dimension mmap
+ * @return: function pointer of compiled code
+ */
+BrainFuckCompiled compileO1(linked_list_token* token,const statistic_token &s);
+
+void freeListToken(linked_list_token*&);
+
+/*
+ * @briefs: first stage of compilation
+ * @param[source]: list of token result to lexing_parsing operation
+ * @param[dest]: new list optimizate
+ * @param[statistic]: new statistic
+ */
+void optimizeListTokenO1(linked_list_token *source,linked_list_token *&dest,statistic_token &statistic);
 
 void clear_memory(char ptr[MAX_DIM_BUFFER]);
 
