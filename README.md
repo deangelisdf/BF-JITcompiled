@@ -1,5 +1,5 @@
 # BF-JITcompiled
-Compilation of BrainFuck in Just-In-Time without use external library for JIT Compilation.<br>
+Compilation of BrainFuck in Just-In-Time without use external library for JIT Compilation using copy-and-patch strategy.<br>
 <br>
 BrainFuck is an esoteric programming language simply to study and hard to use, because you have few operators available.<br>
 For the same reason, it is simple to implement an interpeter.<br>
